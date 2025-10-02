@@ -1,0 +1,120 @@
+define new bot named "YourBotName": #--- CHANGE NEEDED
+  token: "YourBotToken" #(keep it private)  #--- CHANGE NEEDED
+  intents: default intents
+  policy: all
+  auto reconnect: true
+  compression: none
+  
+  on ready:
+    set the online status of bot "YourBotName" to online  #--- CHANGE NEEDED
+    set the presence of the bot named "YourBotName" to playing "YourBotStatus"  #--- CHANGE NEEDED
+
+
+command /report <player>:
+    description: Report de joueur integrer a discord
+    permission: report.player  # Replace with your custom permission
+    trigger:
+        set {_suspect} to arg-1
+        if {_suspect} has played before:
+            
+            create a gui with virtual chest inventory with 6 rows named "&cReport %{_suspect}%" and shape "xxxxxxxxx", "x-a---b-x", "x-c---d-x", "x-e---f-x", "x-g---h-x", and "xxxxoxxxx":
+                make gui slot "x" with emerald block named " "
+
+                make gui slot "-" with lime stained glass pane named " "
+
+                make gui slot "o" with barrier named "&4Quitter":
+                    close player's inventory
+
+                make gui slot "a" with paper named "&cCheat / Hack":
+                    set {_reason} to "Cheat / Hack"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+
+                make gui slot "b" with ender pearl named "&dGlitch / Bug Abuse":
+                    set {_reason} to "Glitch / Bug Abuse"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                    
+                make gui slot "c" with book named "&bToxicité / Insultes":
+                    set {_reason} to "Toxicité / Insultes"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                    
+                make gui slot "d" with map named "&eSpam / Flood":          
+                    set {_reason} to "Spam / Flood"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                         
+                make gui slot "e" with diamond named "&6Grief de lobby":
+                    set {_reason} to "Grief de lobby"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                    
+                make gui slot "f" with gold ingot named "&6Pub / Promotion": 
+                    set {_reason} to "Pub / Promotion"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                    
+                make gui slot "g" with iron sword named "&cTriche Mini-jeux":
+                    set {_reason} to "Triche Mini-jeux"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                    
+                make gui slot "h" with compass named "&aAutre / Divers":
+                    set {_reason} to "Autre / Divers"
+                    send "&aMerci d'avoir report &f%{_suspect}% &apour &e%{_reason}%&a !" to player
+                    send "&c%player% vous a report pour &e%{_reason}%&c !" to {_suspect}
+                    close player's inventory
+                    DiscordReport_handleReport(player, {_suspect}, {_reason})
+
+                    
+
+            open the last gui for the player
+        else:
+            send "&4Ce joueur ne s'est jamais connecté" to player
+            stop
+
+function DiscordReport_handleReport(reporter: player, suspect: player, reason: string):
+    if {report::%uuid of {_reporter}%::other::number} is not set:
+        set {report::%uuid of {_reporter}%::other::number} to 1
+    else:
+        add 1 to {report::%uuid of {_reporter}%::other::number}    
+    if {report::%uuid of {_suspect}%::self::number} is not set:
+        set {report::%uuid of {_suspect}%::self::number} to 1
+    else:
+        add 1 to {report::%uuid of {_suspect}%::self::number}    
+    add "%{_reason}%" to {repport::%uuid of {_reporter}%::other::raison}
+    add "%{_reason}%" to {repport::%uuid of {_suspect}%::self::raison}
+
+    make embed and store it in {_embed}: 
+        set title of embed to "REPORT ALERT"
+        set description of embed to "`%name of {_suspect}%` a ete report par `%name of {_reporter}%`"
+        set embed color of the embed to red 
+        add inline field named "Raison" with value "%{_reason}%" to fields of embed
+        add inline field named "`%name of {_reporter}%` (Reporter)" with value "A report %{report::%uuid of {_reporter}%::other::number}% fois%nl%S'est fait report %{report::%uuid of {_reporter}%::self::number}% fois" to fields of embed
+        add inline field named "`%name of {_suspect}%` (Suspect)" with value "A report %{report::%uuid of {_suspect}%::other::number}% fois%nl%S'est fait report %{report::%uuid of {_suspect}%::self::number}% fois" to fields of embed
+        set footer of embed to "YourBotName"  #--- CHANGE NEEDED
+        set timestamp of embed to now    
+    post {_embed} to text channel with id "YourChanelID" #--- CHANGE NEEDED
+     
