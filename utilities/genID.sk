@@ -1,0 +1,7 @@
+function utils_genID(list: numbers) :: number:
+    if size of {_list::*} is 0: 
+        return 1
+    set {_i} to 1
+    while {_list::*} contains {_i}:
+        add 1 to {_i}
+    return {_i}
